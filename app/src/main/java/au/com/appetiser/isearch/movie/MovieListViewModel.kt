@@ -1,4 +1,4 @@
-package au.com.appetiser.isearch
+package au.com.appetiser.isearch.movie
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -34,7 +34,10 @@ class MovieListViewModel(): ViewModel() {
         viewModelScope.launch {
             try {
                 withContext(Dispatchers.IO) {
-                    val movieListResponse: MovieListResponse = ITunesStoreApi.retrofitService.get(TERM_STAR, COUNTRY_AU, MEDIA_MOVIE)
+                    val movieListResponse: MovieListResponse = ITunesStoreApi.retrofitService
+                                                                             .get( TERM_STAR   ,
+                                                                                   COUNTRY_AU  ,
+                                                                                   MEDIA_MOVIE )
                     _movieList.postValue(movieListResponse.results)
                 }
             } catch(exception: Exception) {
