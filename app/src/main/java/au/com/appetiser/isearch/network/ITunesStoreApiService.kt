@@ -1,6 +1,6 @@
 package au.com.appetiser.isearch.network
 
-import au.com.appetiser.isearch.network.jsonadapter.MoviesResponse
+import au.com.appetiser.isearch.network.model.MovieListResponse
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -33,7 +33,7 @@ interface ITunesStoreApiService {
         @Query(TERM   ) term   : String,
         @Query(COUNTRY) country: String,
         @Query(MEDIA  ) media  : String,
-    ): MoviesResponse
+    ): MovieListResponse
 
 }
 
