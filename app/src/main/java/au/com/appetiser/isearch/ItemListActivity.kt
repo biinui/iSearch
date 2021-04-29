@@ -2,18 +2,18 @@ package au.com.appetiser.isearch
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.core.widget.NestedScrollView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.RecyclerView
-import androidx.appcompat.widget.Toolbar
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.widget.NestedScrollView
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import au.com.appetiser.isearch.dummy.DummyContent
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 
 /**
  * An activity representing a list of Pings. This activity
@@ -34,6 +34,8 @@ class ItemListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_item_list)
+
+        val viewModel = ViewModelProvider(this).get(MovieListViewModel::class.java)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
