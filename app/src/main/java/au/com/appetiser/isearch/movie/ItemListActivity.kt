@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import au.com.appetiser.isearch.R
 import au.com.appetiser.isearch.database.MovieDatabase
 import au.com.appetiser.isearch.databinding.ActivityItemListBinding
@@ -71,7 +72,7 @@ class ItemListActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         })
-        binding.movieList.itemList.adapter = movieListAdapter
+        findViewById<RecyclerView>(R.id.item_list).adapter = movieListAdapter
         viewModel.movieList.observe(this, Observer { movieList ->
             movieList?.let {
                 movieListAdapter.submitList(movieList)

@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/item_list"
-        android:name="au.com.appetiser.isearch.ItemListFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        app:layoutManager="LinearLayoutManager"
-        tools:context=".movie.ItemListActivity"
-        tools:listitem="@layout/item_list_content" />
-
-</layout>
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item_list"
+    android:name="au.com.appetiser.isearch.ItemListFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    app:layoutManager="LinearLayoutManager"
+    tools:context=".movie.ItemListActivity"
+    tools:listitem="@layout/item_list_content" />
