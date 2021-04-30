@@ -16,21 +16,57 @@
     This layout is a two-pane layout for the Items master/detail flow.
     -->
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/item_list"
-        android:name="au.com.appetiser.isearch.ItemListFragment"
+    <FrameLayout
         android:layout_width="@dimen/item_width"
         android:layout_height="match_parent"
         android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        app:layoutManager="LinearLayoutManager"
-        tools:context="au.com.appetiser.isearch.movie.ItemListActivity"
-        tools:listitem="@layout/item_list_content" />
+        android:layout_marginRight="4dp">
 
-    <FrameLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/item_list"
+            android:name="au.com.appetiser.isearch.ItemListFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="LinearLayoutManager"
+            tools:context="au.com.appetiser.isearch.movie.ItemListActivity"
+            tools:listitem="@layout/item_list_content" />
+
+        <ProgressBar
+            android:id="@+id/movielist_progress_lan"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="@dimen/item_width"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/item_detail_container"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="3" />
+        android:layout_weight="3">
+
+        <ImageView
+            android:id="@+id/movie_image"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_baseline_movie_24" />
+
+        <TextView
+            android:id="@+id/select_movie_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/select_a_movie_to_see_its_details"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/movie_image" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

@@ -2,6 +2,8 @@ package au.com.appetiser.isearch.movie
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.widget.NestedScrollView
@@ -28,7 +30,7 @@ class ItemListActivity : AppCompatActivity() {
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
      */
-    private var twoPane: Boolean = false
+    private var isTwoPane: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +38,16 @@ class ItemListActivity : AppCompatActivity() {
         val binding = ActivityItemListBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.lifecycleOwner = this
+
+        if (findViewById<NestedScrollView>(R.id.item_detail_container) != null) {
+            // The detail container view will be present only in the
+            // large-screen layouts (res/values-w900dp).
+            // If this view is present, then the
+            // activity should be in two-pane mode.
+            isTwoPane = true
+        }
+
+        showProgress(isTwoPane)
 
         val database = MovieDatabase.getInstance(this.application)
         val repository = MovieRepository(database)
@@ -46,16 +58,8 @@ class ItemListActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         toolbar.title = title
 
-        if (findViewById<NestedScrollView>(R.id.item_detail_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-w900dp).
-            // If this view is present, then the
-            // activity should be in two-pane mode.
-            twoPane = true
-        }
-
         val movieListAdapter = MovieListAdapter(MovieListener { movie ->
-            if (twoPane) {
+            if (isTwoPane) {
                 val fragment = ItemDetailFragment().apply {
                     arguments = Bundle().apply {
                         putLong(ItemDetailFragment.ARG_ITEM_ID, movie.trackId)
@@ -72,12 +76,30 @@ class ItemListActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         })
-        findViewById<RecyclerView>(R.id.item_list).adapter = movieListAdapter
+        val recyclerView = findViewById<RecyclerView>(R.id.item_list)
+        recyclerView.adapter = movieListAdapter
         viewModel.movieList.observe(this, Observer { movieList ->
             movieList?.let {
                 movieListAdapter.submitList(movieList)
+                hideProgress(isTwoPane)
             }
         })
+    }
+
+    private fun showProgress(isTwoPane: Boolean) {
+        if (isTwoPane) {
+            findViewById<ProgressBar>(R.id.movielist_progress_lan).visibility = View.VISIBLE
+        } else {
+            findViewById<ProgressBar>(R.id.movielist_progress).visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideProgress(isTwoPane: Boolean) {
+        if (isTwoPane) {
+            findViewById<ProgressBar>(R.id.movielist_progress_lan).visibility = View.GONE
+        } else {
+            findViewById<ProgressBar>(R.id.movielist_progress).visibility = View.GONE
+        }
     }
 
 }

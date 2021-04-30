@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import au.com.appetiser.isearch.R
 import au.com.appetiser.isearch.database.MovieDatabase
@@ -19,11 +20,6 @@ import com.google.android.material.appbar.CollapsingToolbarLayout
  * on handsets.
  */
 class ItemDetailFragment : Fragment() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
 
     override fun onCreateView( inflater: LayoutInflater   ,
                                container: ViewGroup?      ,
@@ -40,7 +36,12 @@ class ItemDetailFragment : Fragment() {
                 val viewModelFactory = MovieDetailViewModelFactory(trackId, repository)
                 val viewModel = ViewModelProvider(this, viewModelFactory).get(MovieDetailViewModel::class.java)
                 binding.viewModel = viewModel
-                activity?.findViewById<CollapsingToolbarLayout>(R.id.toolbar_layout)?.title = viewModel.movie.value?.trackName
+                viewModel.movie.observe(viewLifecycleOwner, Observer { movie ->
+                    movie?.let {
+                        requireActivity().findViewById<CollapsingToolbarLayout>(R.id.toolbar_layout)?.title = viewModel.movie.value?.trackName
+                    }
+                })
+
             }
         }
 
