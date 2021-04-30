@@ -14,6 +14,7 @@ private const val BASE_URL = "https://itunes.apple.com/"
 private const val TERM    = "term"
 private const val COUNTRY = "country"
 private const val MEDIA   = "media"
+private const val LIMIT   = "limit"
 
 private val moshi = Moshi.Builder()
                          .add(KotlinJsonAdapterFactory())
@@ -33,6 +34,7 @@ interface ITunesStoreApiService {
         @Query(TERM   ) term   : String,
         @Query(COUNTRY) country: String,
         @Query(MEDIA  ) media  : String,
+        @Query(LIMIT  ) limit  : String,
     ): MovieListResponse
 
 }
