@@ -7,13 +7,11 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import au.com.appetiser.isearch.moviedetail.ItemDetailActivity
-import au.com.appetiser.isearch.moviedetail.ItemDetailFragment
 import au.com.appetiser.isearch.R
 import au.com.appetiser.isearch.database.MovieDatabase
 import au.com.appetiser.isearch.databinding.ActivityItemListBinding
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
+import au.com.appetiser.isearch.moviedetail.ItemDetailActivity
+import au.com.appetiser.isearch.moviedetail.ItemDetailFragment
 
 /**
  * An activity representing a list of Pings. This activity
@@ -46,11 +44,6 @@ class ItemListActivity : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         toolbar.title = title
-
-        findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
 
         if (findViewById<NestedScrollView>(R.id.item_detail_container) != null) {
             // The detail container view will be present only in the
