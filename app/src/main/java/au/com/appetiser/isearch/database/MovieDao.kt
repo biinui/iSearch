@@ -17,6 +17,6 @@ interface MovieDao {
     fun getAllMovies(): LiveData<List<Movie>>
 
     @Query("SELECT * FROM movie_table WHERE trackId = :trackId")
-    fun getMovieById(trackId: Int): Movie
+    fun getMovieById(trackId: Long): Movie
 
 }

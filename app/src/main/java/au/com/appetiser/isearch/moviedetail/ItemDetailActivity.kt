@@ -1,4 +1,4 @@
-package au.com.appetiser.isearch
+package au.com.appetiser.isearch.moviedetail
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,6 +6,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
+import au.com.appetiser.isearch.R
 import au.com.appetiser.isearch.movie.ItemListActivity
 
 /**

@@ -7,8 +7,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import au.com.appetiser.isearch.ItemDetailActivity
-import au.com.appetiser.isearch.ItemDetailFragment
+import au.com.appetiser.isearch.moviedetail.ItemDetailActivity
+import au.com.appetiser.isearch.moviedetail.ItemDetailFragment
 import au.com.appetiser.isearch.R
 import au.com.appetiser.isearch.database.MovieDatabase
 import au.com.appetiser.isearch.databinding.ActivityItemListBinding
@@ -60,8 +60,23 @@ class ItemListActivity : AppCompatActivity() {
             twoPane = true
         }
 
-        val movieListAdapter = MovieListAdapter(MovieListener {
-            // TODO: Handle tablet and phone navigation
+        val movieListAdapter = MovieListAdapter(MovieListener { movie ->
+            if (twoPane) {
+                val fragment = ItemDetailFragment().apply {
+                    arguments = Bundle().apply {
+                        putLong(ItemDetailFragment.ARG_ITEM_ID, movie.trackId)
+                    }
+                }
+                this.supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.item_detail_container, fragment)
+                    .commit()
+            } else {
+                val intent = Intent(applicationContext, ItemDetailActivity::class.java).apply {
+                    putExtra(ItemDetailFragment.ARG_ITEM_ID, movie.trackId.toString())
+                }
+                applicationContext.startActivity(intent)
+            }
         })
         binding.movieList.itemList.adapter = movieListAdapter
         viewModel.movieList.observe(this, Observer { movieList ->

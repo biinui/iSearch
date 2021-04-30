@@ -24,9 +24,7 @@ class MovieListViewModel(private val repository: MovieRepository): ViewModel() {
     private fun refreshMovieList() {
         viewModelScope.launch {
             try {
-                withContext(Dispatchers.IO) {
-                    repository.refreshMovieList()
-                }
+                repository.refreshMovieList()
             } catch(exception: Exception) {
                 _showGetMoviesFailed.value = true
                 Timber.e("Failed to get movies: ${exception.localizedMessage}")
