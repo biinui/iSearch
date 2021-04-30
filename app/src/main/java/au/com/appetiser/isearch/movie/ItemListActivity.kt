@@ -73,9 +73,9 @@ class ItemListActivity : AppCompatActivity() {
                     .commit()
             } else {
                 val intent = Intent(applicationContext, ItemDetailActivity::class.java).apply {
-                    putExtra(ItemDetailFragment.ARG_ITEM_ID, movie.trackId.toString())
+                    putExtra(ItemDetailFragment.ARG_ITEM_ID, movie.trackId)
                 }
-                applicationContext.startActivity(intent)
+                startActivity(intent)
             }
         })
         binding.movieList.itemList.adapter = movieListAdapter
