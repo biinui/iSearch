@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import au.com.appetiser.isearch.ItemDetailActivity
 import au.com.appetiser.isearch.ItemDetailFragment
 import au.com.appetiser.isearch.R
+import au.com.appetiser.isearch.database.MovieDatabase
 import au.com.appetiser.isearch.databinding.ActivityItemListBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -37,7 +38,10 @@ class ItemListActivity : AppCompatActivity() {
         setContentView(binding.root)
         binding.lifecycleOwner = this
 
-        val viewModel = ViewModelProvider(this).get(MovieListViewModel::class.java)
+        val database = MovieDatabase.getInstance(this.application)
+        val repository = MovieRepository(database)
+        val viewModelFactory = MovieListViewModelFactory(repository)
+        val viewModel = ViewModelProvider(this, viewModelFactory).get(MovieListViewModel::class.java)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)

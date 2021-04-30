@@ -1,11 +1,16 @@
 package au.com.appetiser.isearch.network.model
 
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "movie_table")
 data class Movie(
-    val trackId         : Long  ,
-    val trackName       : String,
-    val artworkUrl30    : String,
-    val artworkUrl100   : String,
-    val trackPrice      : Double,
-    val primaryGenreName: String,
-    val longDescription : String,
+    @PrimaryKey val trackId         : Long  ,
+    @ColumnInfo val trackName       : String,
+    @ColumnInfo val artworkUrl30    : String,
+    @ColumnInfo val artworkUrl100   : String,
+    @ColumnInfo val trackPrice      : Double,
+    @ColumnInfo val primaryGenreName: String,
+    @ColumnInfo val longDescription : String,
 )
