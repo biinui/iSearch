@@ -13,7 +13,7 @@ interface MovieDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAllMovies(movieList: List<Movie>)
 
-    @Query("SELECT * FROM movie_table")
+    @Query("SELECT * FROM movie_table ORDER BY trackName")
     fun getAllMovies(): LiveData<List<Movie>>
 
     @Query("SELECT * FROM movie_table WHERE trackId = :trackId")
