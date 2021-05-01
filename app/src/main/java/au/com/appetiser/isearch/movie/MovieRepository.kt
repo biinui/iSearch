@@ -16,11 +16,11 @@ private const val MEDIA_MOVIE = "movie"
 private const val LIMIT_20  = "20"
 private const val LIMIT_200 = "200"
 
-class MovieRepository(private val database: MovieDatabase) {
-    val movie = MutableLiveData<Movie>()
-    val movieList: LiveData<List<Movie>> = database.movieDao.getAllMovies()
+class MovieRepository(private val database: MovieDatabase): MovieRepositoryInterface {
+    override val movie = MutableLiveData<Movie>()
+    override val movieList: LiveData<List<Movie>> = database.movieDao.getAllMovies()
 
-    suspend fun refreshMovieList() {
+    override suspend fun refreshMovieList() {
         withContext(Dispatchers.IO) {
             var movieListResponse = quickSearch()
             database.movieDao.insertAllMovies(movieListResponse.results)
@@ -44,7 +44,7 @@ class MovieRepository(private val database: MovieDatabase) {
                                                    LIMIT_200   )
     }
 
-    suspend fun getMovie(trackId: Long) {
+    override suspend fun getMovie(trackId: Long) {
         withContext(Dispatchers.IO) {
             val retrievedMovie = database.movieDao.getMovieById(trackId)
             movie.postValue(retrievedMovie)

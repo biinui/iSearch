@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class MovieListViewModel(private val repository: MovieRepository): ViewModel() {
+class MovieListViewModel(private val repository: MovieRepositoryInterface): ViewModel() {
 
     val movieList = repository.movieList
 
