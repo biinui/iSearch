@@ -15,6 +15,7 @@ buildscript {
         retrofit_coroutines_adapter_version = "0.9.2"
         room_version = "2.3.0"
 
+        swiperefresh_version = "1.1.0"
         timber_version = "4.7.1"
 
         lifecycle_version = "2.2.0"

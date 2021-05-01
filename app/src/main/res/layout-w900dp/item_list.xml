@@ -16,7 +16,8 @@
     This layout is a two-pane layout for the Items master/detail flow.
     -->
 
-    <FrameLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swiperefresh_twopane"
         android:layout_width="@dimen/item_width"
         android:layout_height="match_parent"
         android:layout_marginLeft="4dp"
@@ -31,15 +32,7 @@
             tools:context="au.com.appetiser.isearch.movie.ItemListActivity"
             tools:listitem="@layout/item_list_content" />
 
-        <ProgressBar
-            android:id="@+id/movielist_progress_lan"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="@dimen/item_width"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone" />
-
-    </FrameLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/item_detail_container"

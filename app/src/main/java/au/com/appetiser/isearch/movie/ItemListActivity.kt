@@ -2,14 +2,13 @@ package au.com.appetiser.isearch.movie
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import au.com.appetiser.isearch.R
 import au.com.appetiser.isearch.database.MovieDatabase
 import au.com.appetiser.isearch.databinding.ActivityItemListBinding
@@ -47,12 +46,23 @@ class ItemListActivity : AppCompatActivity() {
             isTwoPane = true
         }
 
-        showProgress(isTwoPane)
+        val swipeRefresh = getSwipRefresh(isTwoPane)
+        swipeRefresh.isRefreshing = true
 
         val database = MovieDatabase.getInstance(this.application)
         val repository = MovieRepository(database)
         val viewModelFactory = MovieListViewModelFactory(repository)
         val viewModel = ViewModelProvider(this, viewModelFactory).get(MovieListViewModel::class.java)
+
+        swipeRefresh.setOnRefreshListener {
+            viewModel.refreshMovieList()
+        }
+
+        viewModel.isRefreshingMovieList.observe(this, Observer { isRefreshingMovieList ->
+            isRefreshingMovieList?.let {
+                if (isRefreshingMovieList == false) swipeRefresh.isRefreshing = false
+            }
+        })
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -76,30 +86,21 @@ class ItemListActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         })
+
         val recyclerView = findViewById<RecyclerView>(R.id.item_list)
         recyclerView.adapter = movieListAdapter
+
         viewModel.movieList.observe(this, Observer { movieList ->
             movieList?.let {
                 movieListAdapter.submitList(movieList)
-                hideProgress(isTwoPane)
+                swipeRefresh.isRefreshing = false
             }
         })
     }
 
-    private fun showProgress(isTwoPane: Boolean) {
-        if (isTwoPane) {
-            findViewById<ProgressBar>(R.id.movielist_progress_lan).visibility = View.VISIBLE
-        } else {
-            findViewById<ProgressBar>(R.id.movielist_progress).visibility = View.VISIBLE
-        }
-    }
-
-    private fun hideProgress(isTwoPane: Boolean) {
-        if (isTwoPane) {
-            findViewById<ProgressBar>(R.id.movielist_progress_lan).visibility = View.GONE
-        } else {
-            findViewById<ProgressBar>(R.id.movielist_progress).visibility = View.GONE
-        }
+    private fun getSwipRefresh(isTwoPane: Boolean): SwipeRefreshLayout {
+        return if (isTwoPane) findViewById(R.id.swiperefresh_twopane)
+               else           findViewById(R.id.swiperefresh)
     }
 
 }

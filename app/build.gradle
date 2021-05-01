@@ -80,6 +80,9 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
     testImplementation "androidx.room:room-testing:$room_version"
 
+    // Swipe Refresh
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:$swiperefresh_version"
+
     // Timber
     implementation "com.jakewharton.timber:timber:$timber_version"
 
