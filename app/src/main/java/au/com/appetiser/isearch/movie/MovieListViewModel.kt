@@ -15,6 +15,10 @@ class MovieListViewModel(private val repository: MovieRepository): ViewModel() {
     val showGetMoviesFailed: LiveData<Boolean>
         get() = _showGetMoviesFailed
 
+    private var _showUpdateMoviesFailed = MutableLiveData<Boolean>().apply { false }
+    val showUpdateMoviesFailed: LiveData<Boolean>
+        get() = _showUpdateMoviesFailed
+
     private var _isRefreshingMovieList = MutableLiveData<Boolean>().apply { false }
     val isRefreshingMovieList: LiveData<Boolean>
         get() = _isRefreshingMovieList
@@ -29,7 +33,8 @@ class MovieListViewModel(private val repository: MovieRepository): ViewModel() {
                 refreshMovieListStarted()
                 repository.refreshMovieList()
             } catch(exception: Exception) {
-                _showGetMoviesFailed.value = true
+                if (movieList.value.isNullOrEmpty()) _showGetMoviesFailed.value    = true
+                else                                 _showUpdateMoviesFailed.value = true
                 Timber.e("Failed to get movies: ${exception.localizedMessage}")
             } finally {
                 refreshMovieListDone()
@@ -39,6 +44,10 @@ class MovieListViewModel(private val repository: MovieRepository): ViewModel() {
 
     fun showGetMoviesFailedDone() {
         _showGetMoviesFailed.value = false
+    }
+
+    fun showUpdateMoviesFailedDone() {
+        _showUpdateMoviesFailed.value = false
     }
 
     private fun refreshMovieListStarted() {

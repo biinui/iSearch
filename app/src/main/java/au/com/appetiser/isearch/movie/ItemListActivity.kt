@@ -2,8 +2,11 @@ package au.com.appetiser.isearch.movie
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -14,6 +17,8 @@ import au.com.appetiser.isearch.database.MovieDatabase
 import au.com.appetiser.isearch.databinding.ActivityItemListBinding
 import au.com.appetiser.isearch.moviedetail.ItemDetailActivity
 import au.com.appetiser.isearch.moviedetail.ItemDetailFragment
+import com.google.android.material.snackbar.Snackbar
+
 
 /**
  * An activity representing a list of Pings. This activity
@@ -49,12 +54,15 @@ class ItemListActivity : AppCompatActivity() {
         val swipeRefresh = getSwipRefresh(isTwoPane)
         swipeRefresh.isRefreshing = true
 
+        val swipeToRetry = findViewById<ConstraintLayout>(R.id.swipe_to_retry_message)
+
         val database = MovieDatabase.getInstance(this.application)
         val repository = MovieRepository(database)
         val viewModelFactory = MovieListViewModelFactory(repository)
         val viewModel = ViewModelProvider(this, viewModelFactory).get(MovieListViewModel::class.java)
 
         swipeRefresh.setOnRefreshListener {
+            swipeToRetry.visibility = View.GONE
             viewModel.refreshMovieList()
         }
 
@@ -96,6 +104,35 @@ class ItemListActivity : AppCompatActivity() {
                 swipeRefresh.isRefreshing = false
             }
         })
+
+        viewModel.showGetMoviesFailed.observe(this, Observer {
+            if (it) {
+                swipeRefresh.isRefreshing = false
+                swipeToRetry.visibility = View.VISIBLE
+                viewModel.showGetMoviesFailedDone()
+            }
+        })
+
+        viewModel.showUpdateMoviesFailed.observe(this, Observer {
+            if (it) {
+                swipeRefresh.isRefreshing = false
+                showUpdateFailedSnackbar(binding.root)
+                viewModel.showUpdateMoviesFailedDone()
+            }
+        })
+
+    }
+
+    private fun showUpdateFailedSnackbar(view: View) {
+        val snackbar = Snackbar.make(
+            view,
+            R.string.failed_to_retrieve_movies_please_swipe_down_to_retry,
+            Snackbar.LENGTH_SHORT
+        )
+        val snackbarView = snackbar.view
+        val snackTextView = snackbarView.findViewById(com.google.android.material.R.id.snackbar_text) as TextView
+        snackTextView.maxLines = 2
+        snackbar.show()
     }
 
     private fun getSwipRefresh(isTwoPane: Boolean): SwipeRefreshLayout {

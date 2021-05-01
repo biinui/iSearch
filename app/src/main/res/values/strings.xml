@@ -7,4 +7,6 @@
     <string name="movie_artwork">Movie artwork</string>
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque et tellus at urna ultricies dapibus non vel tortor. Nunc tellus ligula, sollicitudin eu tempor nec, elementum in justo. Pellentesque luctus in dui at aliquam. Integer convallis sit amet erat eget consequat. Curabitur cursus sapien nisi, ut porta nibh suscipit nec. Phasellus ut malesuada ipsum. Proin tincidunt nulla eget dui blandit sagittis. Quisque tincidunt diam id orci pretium, sit amet mattis dui porttitor.</string>
     <string name="select_a_movie_to_see_its_details">Select a movie to see its details</string>
+    <string name="failed_to_retrieve_movies_please_swipe_down_to_retry">Failed to retrieve movies.\nPlease swipe down to retry.</string>
+    <string name="arrow_pointing_down">Arrow pointing down</string>
 </resources>
