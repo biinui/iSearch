@@ -102,6 +102,7 @@ class ItemListActivity : AppCompatActivity() {
             movieList?.let {
                 movieListAdapter.submitList(movieList)
                 swipeRefresh.isRefreshing = false
+                if (movieList.isNotEmpty()) swipeToRetry.visibility = View.GONE
             }
         })
 
