@@ -79,8 +79,9 @@ MVVM
 * Pros:
    * ViewModel is lifecycle-aware so survives configuration changes
    * ViewModel is unaware of View/UI hence loosely coupled
+   * [My Opinion] Google currently endorses MVVM so using MVVM might increase readability since most androidDevs should be familiar. 
 * Cons:
-   * LiveData/Coroutines could be hard to trace/debug
+   * [My Opinion] LiveData/Coroutines could be hard to trace/debug
    * Observables jungle
    * Possible cyclic update between View and ViewModel
 
