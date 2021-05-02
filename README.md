@@ -142,9 +142,9 @@ override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
 **NOT Implemented in App**
 
 3B. SavedInstanceState (Bundle)
-    * For saving simple data.
-    * Could be used to save filled fields in a form to survive app restore (e.g. process death) so user doesn't have to fill-in again.
-    * For this app, can be used to save movie.trackId shown in MovieDetail screen to show again when user returns to app.
+* For saving simple data.
+* Could be used to save filled fields in a form to survive app restore (e.g. process death) so user doesn't have to fill-in again.
+* For this app, can be used to save movie.trackId shown in MovieDetail screen to show again when user returns to app.
 
 4. Disk
     * For non-volatile saving of files/images on local_storage/sd_card.
