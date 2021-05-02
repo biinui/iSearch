@@ -1,6 +1,8 @@
-# iSearch
+# iSearch – Apple Search Engine
 
-## Retrieve Movie List from iTunes Store API
+## App Walkthrough
+
+### Retrieve Movie List from iTunes Store API
 
 1. Use **Retrofit+OKHttpClient** for Type-Safe HTTP calls.
 2. Use **Moshi** for parsing JSON returned by API.
@@ -12,21 +14,21 @@
 
 ![Partial Search then Full Search](https://raw.githubusercontent.com/biinui/iSearch/master/blob/assets/partialSearch_thenFullSearch.gif?raw=true)
 
-### Retrieve Movie Artwork
+#### Retrieve Movie Artwork
 
 1. Use **Glide** to manage Movie's artwork placeholder, loading of artwork image URL, and error.
 2. The artwork image in MovieList uses the smallest size w/c is 30x30px.
 
 ![Load 30-Pixel Artwork Using Glide](https://raw.githubusercontent.com/biinui/iSearch/master/blob/assets/loadArtwork30_usingGlide.gif?raw=true)
 
-### Swipe Down to Update Movie List
+#### Swipe Down to Update Movie List
 
 1. Use **SwipeRefreshLayout** for refreshing Movie List.
 2. The progress indicator informs user that refresh is ongoing.
 
 ![Swipe Down to Refresh Movie List](https://raw.githubusercontent.com/biinui/iSearch/master/blob/assets/swipeToRefresh.gif?raw=true)
 
-## Show Movie Detail
+### Show Movie Detail
 
 The artwork image in MovieDetail uses the largest size w/c is 100x100px.
 
@@ -38,7 +40,7 @@ In portrait,
 
 ![Movie Detail in Portrait](https://raw.githubusercontent.com/biinui/iSearch/master/blob/assets/movieDetail_portrait.gif?raw=true)
 
-## Survive Configuration Changes Using ViewModel
+### Survive Configuration Changes Using ViewModel
 
 App survives rotation,
 
@@ -48,7 +50,7 @@ App opens last screen the user was on,
 
 ![Open Last Screen Visited](https://raw.githubusercontent.com/biinui/iSearch/master/blob/assets/openLastScreenVisited.gif?raw=true)
 
-## Error Handling
+### Error Handling
 
 MovieList shows retry message if there are no cached movies,
 
