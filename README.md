@@ -50,6 +50,10 @@ App opens last screen the user was on,
 
 ![Open Last Screen Visited](https://raw.githubusercontent.com/biinui/iSearch/master/blob/assets/openLastScreenVisited.gif?raw=true)
 
+App survives process death,
+
+![Survive Process Death](https://raw.githubusercontent.com/biinui/iSearch/master/blob/assets/surviveProcessDeath.gif?raw=true)
+
 ### Error Handling
 
 MovieList shows retry message if there are no cached movies,
@@ -59,6 +63,44 @@ MovieList shows retry message if there are no cached movies,
 Snackbar shows retry message if there are cached movies,
 
 ![Failed to Retrieve Movie List But With Cached Movies](https://raw.githubusercontent.com/biinui/iSearch/master/blob/assets/failedToRetrieve_withCachedMovies.gif?raw=true)
+
+## Persistence/Caching Mechanism – **RepositoryPattern+Room**
+
+1. SavedInstanceState
+    * User Form
+    * Movie Detail – simple data
+2. SharedPreferences
+    * Key/Value Store  
+    * Date User Previously Visited
+3. Local Database
+    * Complex Objects
+4. Disk
+    * Store Images on SDCard/LocalDrive
+    * Example: Movie Artwork - at the expense of taking up space.
+
+## Architecture – MVVM
+
+## Testing
+
+Using **Espresso, Hamcrest, IdlingResource, DataBindingIdlingResource**.
+
+### Unit Test for MovieListViewModel using FakeRepository
+
+![Unit Test MovieListViewModel](https://raw.githubusercontent.com/biinui/iSearch/master/blob/assets/unitTest_movieListViewModel.gif?raw=true)
+
+### UI Test for MovieDetail
+
+In landscape, 
+
+![UI Test for Movie Detail in Landscape](https://raw.githubusercontent.com/biinui/iSearch/master/blob/assets/uiTest_movieDetail_landscape.gif?raw=true)
+
+In portrait, 
+
+![UI Test for Movie Detail in Landscape](https://raw.githubusercontent.com/biinui/iSearch/master/blob/assets/uiTest_movieDetail_portrait.gif?raw=true)
+
+## Installation
+
+[Please download APK here](https://drive.google.com/drive/folders/1OhuWoN_Ewxi3Cc-hexhLkI2c6L-hb6vf)
 
 ## Bugs
 
@@ -71,8 +113,10 @@ Pre-Condition:
 
 ## Future Work
 
-1. Movie List Pagination
+1. MovieList Pagination
 2. Dependency Injection (Dagger2 or Koin)
+3. NavigationComponent + SafeArgs
+4. API provides relevant attributes only in JSON response
 
 
 
