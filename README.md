@@ -28,7 +28,7 @@
 
 ![Swipe Down to Refresh Movie List](https://raw.githubusercontent.com/biinui/iSearch/master/blob/assets/swipeToRefresh.gif?raw=true)
 
-### Show Movie Detail
+### Show Movie Detail w/ DataBinding
 
 The artwork image in MovieDetail uses the largest size w/c is 100x100px.
 
@@ -64,21 +64,91 @@ Snackbar shows retry message if there are cached movies,
 
 ![Failed to Retrieve Movie List But With Cached Movies](https://raw.githubusercontent.com/biinui/iSearch/master/blob/assets/failedToRetrieve_withCachedMovies.gif?raw=true)
 
+## Architecture – MVVM
+
+MVP
+* Uses Callbacks
+* Pros:
+   * Separates the View and Model using Presenter
+* Cons:
+   * Presenter coupled w/ View/UI
+   * Presenter destroyed on configuration changes (e.g. device rotation)
+
+MVVM 
+* Uses ObserverPattern (e.g. LiveData, RxJava2)
+* Pros:
+   * ViewModel is lifecycle-aware so survives configuration changes
+   * ViewModel is unaware of View/UI hence loosely coupled
+* Cons:
+   * LiveData/Coroutines could be hard to trace/debug
+   * Observables jungle
+   * Possible cyclic update between View and ViewModel
+
 ## Persistence/Caching Mechanism – **RepositoryPattern+Room**
 
-1. SavedInstanceState
-    * User Form
-    * Movie Detail – simple data
-2. SharedPreferences
-    * Key/Value Store  
-    * Date User Previously Visited
-3. Local Database
-    * Complex Objects
-4. Disk
-    * Store Images on SDCard/LocalDrive
-    * Example: Movie Artwork - at the expense of taking up space.
+1. Local Database
+    * For saving non-volatile complex objects that survives phone reboot.
+    * For this app, save/cache the retrieved movies.
 
-## Architecture – MVVM
+![Cache Movie List using Room and SQLite](https://raw.githubusercontent.com/biinui/iSearch/master/blob/assets/cacheMovieList_usingRoom+SQLite.png?raw=true)
+
+2. SharedPreferences
+    * For saving non-volatile keys/values.
+    * Could be used to save app settings/configurations that survives phone reboot.
+    * For this app, could be used to save the date user previously visited.
+
+![Display Datetime User Last Visited App on Recyclerview Header Flow](https://raw.githubusercontent.com/biinui/iSearch/master/blob/assets/recyclerViewHeader_displaysLastUserVisit.png?raw=true)
+
+```
+@OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+   fun onBackground() {
+      val now = Date().time
+      val sharedPref = applicationContext.getSharedPreferences(
+         applicationContext.getString(R.string.preference_file),
+         Context.MODE_PRIVATE
+      ) ?: return
+      with(sharedPref.edit()) {
+         putLong(applicationContext.getString(R.string.last_user_visit_timestamp), now)
+         apply()
+      }
+   }
+```
+
+![Display Datetime User Last Visited App on Recyclerview Header](https://raw.githubusercontent.com/biinui/iSearch/master/blob/assets/displayLastUserVisit.png?raw=true)
+
+3A. Bundles
+
+Incidentally, the _arguments_ variable used to pass the movie.trackId from MovieList_screen to MovieDetail_screen is a Bundle so it survives destroyed Activity/Fragment. If we use SafeArgs, then we'll need to use SavedInstanceState bundle to restore the movie displayed on MovieDetails_screen to survive process death. Example:
+
+```
+override fun onSaveInstanceState(outState: Bundle) {
+    outState?.run {
+        putLong(ARG_ITEM_ID, trackId)
+    }
+    super.onSaveInstanceState(outState)
+}
+
+override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+    super.onViewStateRestored(savedInstanceState)
+    savedInstanceState?.run {
+        trackId = getLong(ARG_ITEM_ID)
+    }
+    Timber.e("onViewStateRestored")
+}
+```
+
+![Survive Configuration Changes using Bundles](https://raw.githubusercontent.com/biinui/iSearch/master/blob/assets/survivingConfigurationDeath_usingBundles.png?raw=true)
+
+**NOT Implemented in App**
+
+3B. SavedInstanceState (Bundle)
+    * For saving simple data.
+    * Could be used to save filled fields in a form to survive app restore (e.g. process death) so user doesn't have to fill-in again.
+    * For this app, can be used to save movie.trackId shown in MovieDetail screen to show again when user returns to app.
+
+4. Disk
+    * For non-volatile saving of files/images on local_storage/sd_card.
+    * For this app, can be used to cache the movie artworks at the expense of taking up significant storage space. Maybe limit to _n_ recent artworks.
 
 ## Testing
 
