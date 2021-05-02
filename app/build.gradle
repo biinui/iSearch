@@ -96,6 +96,10 @@ dependencies {
     // ViewModel and LiveData
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
 
+    implementation "androidx.lifecycle:lifecycle-runtime:2.0.0"
+    implementation "androidx.lifecycle:lifecycle-extensions:2.0.0"
+    annotationProcessor "androidx.lifecycle:lifecycle-compiler:2.0.0"
+
     testImplementation "androidx.arch.core:core-testing:2.1.0"
     debugImplementation ("androidx.fragment:fragment-testing:1.1.0-alpha07", {
         exclude group: 'androidx.test', module: 'core'

@@ -1,25 +1,76 @@
 package au.com.appetiser.isearch.movie
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import au.com.appetiser.isearch.R
 import au.com.appetiser.isearch.databinding.ItemListContentBinding
 import au.com.appetiser.isearch.network.model.Movie
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class MovieListAdapter(private val clickListener: MovieListener)
-    : ListAdapter<Movie, MovieViewHolder>(MovieDiffCallback()) {
+private const val ITEM_VIEW_TYPE_HEADER = 0
+private const val ITEM_VIEW_TYPE_ITEM = 1
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
-        return MovieViewHolder.from(parent)
+class MovieListAdapter(private val clickListener: MovieListener, private val lastUserVisit: String)
+    : ListAdapter<DataItem, RecyclerView.ViewHolder>(MovieDiffCallback()) {
+
+    private val adapterScope = CoroutineScope(Dispatchers.Default)
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            ITEM_VIEW_TYPE_HEADER -> TextViewHolder.from(parent, lastUserVisit)
+            ITEM_VIEW_TYPE_ITEM -> MovieViewHolder.from(parent)
+            else -> throw ClassCastException("Unknown viewType $viewType")
+        }
     }
 
-    override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
-        val item = getItem(position)
-        holder.bind(clickListener, item)
+    fun addHeaderAndSubmitList(list: List<Movie>?) {
+        adapterScope.launch {
+            val items = when (list) {
+                null -> listOf(DataItem.Header)
+                else -> listOf(DataItem.Header) + list.map { DataItem.MovieItem(it) }
+            }
+            withContext(Dispatchers.Main) {
+                submitList(items)
+            }
+        }
     }
 
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is MovieViewHolder -> {
+                val item = getItem(position) as DataItem.MovieItem
+                holder.bind(clickListener, item.movie)
+            }
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position)) {
+            is DataItem.Header -> ITEM_VIEW_TYPE_HEADER
+            is DataItem.MovieItem -> ITEM_VIEW_TYPE_ITEM
+        }
+    }
+
+}
+
+class TextViewHolder(view: View): RecyclerView.ViewHolder(view) {
+    companion object {
+        fun from(parent: ViewGroup, lastUserVisit: String): TextViewHolder {
+            val layoutInflater = LayoutInflater.from(parent.context)
+            val view = layoutInflater.inflate(R.layout.header_last_visit, parent, false)
+            val textView = view.findViewById<TextView>(R.id.last_visit_text)
+            textView.text = lastUserVisit
+            return TextViewHolder(view)
+        }
+    }
 }
 
 class MovieViewHolder(val binding: ItemListContentBinding)
@@ -40,12 +91,12 @@ class MovieViewHolder(val binding: ItemListContentBinding)
     }
 }
 
-class MovieDiffCallback : DiffUtil.ItemCallback<Movie>() {
-    override fun areItemsTheSame(oldItem: Movie, newItem: Movie): Boolean {
-        return oldItem.trackId == newItem.trackId
+class MovieDiffCallback : DiffUtil.ItemCallback<DataItem>() {
+    override fun areItemsTheSame(oldItem: DataItem, newItem: DataItem): Boolean {
+        return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(oldItem: Movie, newItem: Movie): Boolean {
+    override fun areContentsTheSame(oldItem: DataItem, newItem: DataItem): Boolean {
         return oldItem == newItem
     }
 }

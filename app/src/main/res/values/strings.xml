@@ -9,4 +9,9 @@
     <string name="select_a_movie_to_see_its_details">Select a movie to see its details</string>
     <string name="failed_to_retrieve_movies_please_swipe_down_to_retry">Failed to retrieve movies.\nPlease swipe down to retry.</string>
     <string name="arrow_pointing_down">Arrow pointing down</string>
+
+    <string name="preference_file">Preference File</string>
+    <string name="last_user_visit_timestamp">Last User Visit Timestamp</string>
+    <string name="last_user_visit_timestamp_format">Last Visit: %1$s</string>
+    <string name="first_visit">First Visit</string>
 </resources>

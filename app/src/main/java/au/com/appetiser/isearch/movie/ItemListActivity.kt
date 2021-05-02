@@ -1,7 +1,9 @@
 package au.com.appetiser.isearch.movie
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +20,7 @@ import au.com.appetiser.isearch.databinding.ActivityItemListBinding
 import au.com.appetiser.isearch.moviedetail.ItemDetailActivity
 import au.com.appetiser.isearch.moviedetail.ItemDetailFragment
 import com.google.android.material.snackbar.Snackbar
+import java.util.*
 
 
 /**
@@ -35,6 +38,9 @@ class ItemListActivity : AppCompatActivity() {
      * device.
      */
     private var isTwoPane: Boolean = false
+    private lateinit var swipeRefresh: SwipeRefreshLayout
+    private lateinit var swipeToRetry: ConstraintLayout
+    private lateinit var viewModel: MovieListViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,15 +57,15 @@ class ItemListActivity : AppCompatActivity() {
             isTwoPane = true
         }
 
-        val swipeRefresh = getSwipRefresh(isTwoPane)
+        swipeRefresh = getSwipRefresh(isTwoPane)
         swipeRefresh.isRefreshing = true
 
-        val swipeToRetry = findViewById<ConstraintLayout>(R.id.swipe_to_retry_message)
+        swipeToRetry = findViewById(R.id.swipe_to_retry_message)
 
         val database = MovieDatabase.getInstance(this.application)
         val repository = MovieRepository(database)
         val viewModelFactory = MovieListViewModelFactory(repository)
-        val viewModel = ViewModelProvider(this, viewModelFactory).get(MovieListViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(MovieListViewModel::class.java)
 
         swipeRefresh.setOnRefreshListener {
             swipeToRetry.visibility = View.GONE
@@ -75,6 +81,27 @@ class ItemListActivity : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         toolbar.title = title
+
+        viewModel.showGetMoviesFailed.observe(this, Observer {
+            if (it) {
+                swipeRefresh.isRefreshing = false
+                swipeToRetry.visibility = View.VISIBLE
+                viewModel.showGetMoviesFailedDone()
+            }
+        })
+
+        viewModel.showUpdateMoviesFailed.observe(this, Observer {
+            if (it) {
+                swipeRefresh.isRefreshing = false
+                showUpdateFailedSnackbar(binding.root)
+                viewModel.showUpdateMoviesFailedDone()
+            }
+        })
+
+    }
+
+    override fun onResume() {
+        super.onResume()
 
         val movieListAdapter = MovieListAdapter(MovieListener { movie ->
             if (isTwoPane) {
@@ -93,32 +120,16 @@ class ItemListActivity : AppCompatActivity() {
                 }
                 startActivity(intent)
             }
-        })
+        }, getLastUserVisit())
 
         val recyclerView = findViewById<RecyclerView>(R.id.item_list)
         recyclerView.adapter = movieListAdapter
 
         viewModel.movieList.observe(this, Observer { movieList ->
             movieList?.let {
-                movieListAdapter.submitList(movieList)
+                movieListAdapter.addHeaderAndSubmitList(movieList)
                 swipeRefresh.isRefreshing = false
                 if (movieList.isNotEmpty()) swipeToRetry.visibility = View.GONE
-            }
-        })
-
-        viewModel.showGetMoviesFailed.observe(this, Observer {
-            if (it) {
-                swipeRefresh.isRefreshing = false
-                swipeToRetry.visibility = View.VISIBLE
-                viewModel.showGetMoviesFailedDone()
-            }
-        })
-
-        viewModel.showUpdateMoviesFailed.observe(this, Observer {
-            if (it) {
-                swipeRefresh.isRefreshing = false
-                showUpdateFailedSnackbar(binding.root)
-                viewModel.showUpdateMoviesFailedDone()
             }
         })
 
@@ -139,6 +150,25 @@ class ItemListActivity : AppCompatActivity() {
     private fun getSwipRefresh(isTwoPane: Boolean): SwipeRefreshLayout {
         return if (isTwoPane) findViewById(R.id.swiperefresh_twopane)
                else           findViewById(R.id.swiperefresh)
+    }
+
+    private fun getLastUserVisitTimestamp(): Long {
+        val defaultValue = -1L
+        val sharedPref = this.getSharedPreferences(getString(R.string.preference_file), Context.MODE_PRIVATE) ?: return defaultValue
+        return sharedPref.getLong(getString(R.string.last_user_visit_timestamp), defaultValue)
+    }
+
+    private fun formatTimestampToDate(timestamp: Long): String {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = timestamp
+        return DateFormat.format("yyyy MMM dd HH:mm:ss", calendar).toString()
+    }
+
+    private fun getLastUserVisit(): String {
+        return when (val timestamp = getLastUserVisitTimestamp()) {
+            -1L  -> getString(R.string.first_visit)
+            else -> getString(R.string.last_user_visit_timestamp_format, formatTimestampToDate(timestamp))
+        }
     }
 
 }
