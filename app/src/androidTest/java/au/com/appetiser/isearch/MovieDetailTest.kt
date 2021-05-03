@@ -8,7 +8,7 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItem
 import androidx.test.espresso.matcher.ViewMatchers.*
-import au.com.appetiser.isearch.movie.ItemListActivity
+import au.com.appetiser.isearch.movie.MovieListActivity
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -38,7 +38,7 @@ class MovieDetailTest {
     @Test
     fun viewMovieDetail_success() {
         runBlocking {
-            val activityScenario = ActivityScenario.launch(ItemListActivity::class.java)
+            val activityScenario = ActivityScenario.launch(MovieListActivity::class.java)
             dataBindingIdlingResource.monitorActivity(activityScenario)
 
             val trackName = "Star Trek"

@@ -5,13 +5,13 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import au.com.appetiser.isearch.R
-import au.com.appetiser.isearch.movie.ItemListActivity
+import au.com.appetiser.isearch.movie.MovieListActivity
 
 /**
  * An activity representing a single Item detail screen. This
  * activity is only used on narrow width devices. On tablet-size devices,
  * item details are presented side-by-side with a list of items
- * in a [ItemListActivity].
+ * in a [MovieListActivity].
  */
 class ItemDetailActivity : AppCompatActivity() {
 
@@ -55,7 +55,7 @@ class ItemDetailActivity : AppCompatActivity() {
                     //
                     // http://developer.android.com/design/patterns/navigation.html#up-vs-back
 
-                    navigateUpTo(Intent(this, ItemListActivity::class.java))
+                    navigateUpTo(Intent(this, MovieListActivity::class.java))
                     true
                 }
                 else -> super.onOptionsItemSelected(item)
