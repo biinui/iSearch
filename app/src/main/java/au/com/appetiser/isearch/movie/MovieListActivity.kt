@@ -18,7 +18,7 @@ import au.com.appetiser.isearch.R
 import au.com.appetiser.isearch.database.MovieDatabase
 import au.com.appetiser.isearch.databinding.ActivityItemListBinding
 import au.com.appetiser.isearch.moviedetail.MovieDetailActivity
-import au.com.appetiser.isearch.moviedetail.ItemDetailFragment
+import au.com.appetiser.isearch.moviedetail.MovieDetailFragment
 import com.google.android.material.snackbar.Snackbar
 import java.util.*
 
@@ -49,39 +49,107 @@ class MovieListActivity : AppCompatActivity() {
         setContentView(binding.root)
         binding.lifecycleOwner = this
 
-        if (findViewById<NestedScrollView>(R.id.item_detail_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-w900dp).
-            // If this view is present, then the
-            // activity should be in two-pane mode.
-            isTwoPane = true
-        }
+        initIsTwoPane()
 
-        swipeRefresh = getSwipRefresh(isTwoPane)
+        initSwipeRefresh()
         swipeRefresh.isRefreshing = true
 
-        swipeToRetry = findViewById(R.id.swipe_to_retry_message)
+        initViewModel()
 
+        initSwipeToRetryView()
+        initToolbar()
+
+        observeRefreshingMovieList()
+        observeGetMoviesFailed()
+        observeUpdateMoviesFailed(binding.root)
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val movieListAdapter = MovieListAdapter(initMovieListener(), getLastUserVisitDatetime())
+        initRecyclerView(movieListAdapter)
+        observeMovieList(movieListAdapter)
+    }
+
+    private fun initViewModel() {
         val database = MovieDatabase.getInstance(this.application)
         val repository = MovieRepository(database)
         val viewModelFactory = MovieListViewModelFactory(repository)
         viewModel = ViewModelProvider(this, viewModelFactory).get(MovieListViewModel::class.java)
+    }
 
+    /**
+     *  The detail container view will be present only in the
+     *  large-screen layouts (res/values-w900dp).
+     *  If this view is present, then the
+     *  activity should be in two-pane mode.
+     *
+     *  Side-effect:  updates isTwoPane value
+     */
+    private fun initIsTwoPane() {
+        if (findViewById<NestedScrollView>(R.id.item_detail_container) != null) isTwoPane = true
+    }
+
+    private fun initSwipeToRetryView() {
+        swipeToRetry = findViewById(R.id.swipe_to_retry_message)
+    }
+
+    private fun initSwipeRefresh() {
+        swipeRefresh = getSwipRefresh(isTwoPane)
         swipeRefresh.setOnRefreshListener {
             swipeToRetry.visibility = View.GONE
             viewModel.refreshMovieList()
         }
+    }
 
+    private fun initToolbar() {
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        toolbar.title = title
+    }
+
+    private fun initMovieListener(): MovieListener {
+        return MovieListener { movie ->
+            when (isTwoPane) {
+                true  -> navigateToItemDetailFragment(movie.trackId)
+                false -> navigateToItemDetailActivity(movie.trackId)
+            }
+        }
+    }
+
+    private fun initRecyclerView(movieListAdapter: MovieListAdapter) {
+        val recyclerView = findViewById<RecyclerView>(R.id.item_list)
+        recyclerView.adapter = movieListAdapter
+    }
+
+    private fun navigateToItemDetailFragment(movieId: Long) {
+        val fragment = MovieDetailFragment().apply {
+            arguments = Bundle().apply {
+                putLong(MovieDetailFragment.ARG_ITEM_ID, movieId)
+            }
+        }
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.item_detail_container, fragment)
+            .commit()
+    }
+
+    private fun navigateToItemDetailActivity(movieId: Long) {
+        val intent = Intent(applicationContext, MovieDetailActivity::class.java).apply {
+            putExtra(MovieDetailFragment.ARG_ITEM_ID, movieId)
+        }
+        startActivity(intent)
+    }
+
+    private fun observeRefreshingMovieList() {
         viewModel.isRefreshingMovieList.observe(this, Observer { isRefreshingMovieList ->
             isRefreshingMovieList?.let {
                 if (isRefreshingMovieList == false) swipeRefresh.isRefreshing = false
             }
         })
+    }
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        toolbar.title = title
-
+    private fun observeGetMoviesFailed() {
         viewModel.showGetMoviesFailed.observe(this, Observer {
             if (it) {
                 swipeRefresh.isRefreshing = false
@@ -89,42 +157,19 @@ class MovieListActivity : AppCompatActivity() {
                 viewModel.showGetMoviesFailedDone()
             }
         })
+    }
 
+    private fun observeUpdateMoviesFailed(view: View) {
         viewModel.showUpdateMoviesFailed.observe(this, Observer {
             if (it) {
                 swipeRefresh.isRefreshing = false
-                showUpdateFailedSnackbar(binding.root)
+                showUpdateFailedSnackbar(view)
                 viewModel.showUpdateMoviesFailedDone()
             }
         })
-
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        val movieListAdapter = MovieListAdapter(MovieListener { movie ->
-            if (isTwoPane) {
-                val fragment = ItemDetailFragment().apply {
-                    arguments = Bundle().apply {
-                        putLong(ItemDetailFragment.ARG_ITEM_ID, movie.trackId)
-                    }
-                }
-                this.supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.item_detail_container, fragment)
-                    .commit()
-            } else {
-                val intent = Intent(applicationContext, ItemDetailActivity::class.java).apply {
-                    putExtra(ItemDetailFragment.ARG_ITEM_ID, movie.trackId)
-                }
-                startActivity(intent)
-            }
-        }, getLastUserVisit())
-
-        val recyclerView = findViewById<RecyclerView>(R.id.item_list)
-        recyclerView.adapter = movieListAdapter
-
+    private fun observeMovieList(movieListAdapter: MovieListAdapter) {
         viewModel.movieList.observe(this, Observer { movieList ->
             movieList?.let {
                 movieListAdapter.addHeaderAndSubmitList(movieList)
@@ -132,7 +177,6 @@ class MovieListActivity : AppCompatActivity() {
                 if (movieList.isNotEmpty()) swipeToRetry.visibility = View.GONE
             }
         })
-
     }
 
     private fun showUpdateFailedSnackbar(view: View) {
@@ -153,22 +197,25 @@ class MovieListActivity : AppCompatActivity() {
     }
 
     private fun getLastUserVisitTimestamp(): Long {
-        val defaultValue = -1L
-        val sharedPref = this.getSharedPreferences(getString(R.string.preference_file), Context.MODE_PRIVATE) ?: return defaultValue
-        return sharedPref.getLong(getString(R.string.last_user_visit_timestamp), defaultValue)
+        val sharedPref = this.getSharedPreferences(getString(R.string.preference_file), Context.MODE_PRIVATE) ?: return TIMESTAMP_DEFAULT_VALUE
+        return sharedPref.getLong(getString(R.string.last_user_visit_timestamp), TIMESTAMP_DEFAULT_VALUE)
     }
 
-    private fun formatTimestampToDate(timestamp: Long): String {
+    private fun formatTimestampToDatetime(timestamp: Long): String {
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = timestamp
         return DateFormat.format("yyyy MMM dd HH:mm:ss", calendar).toString()
     }
 
-    private fun getLastUserVisit(): String {
+    private fun getLastUserVisitDatetime(): String {
         return when (val timestamp = getLastUserVisitTimestamp()) {
-            -1L  -> getString(R.string.first_visit)
-            else -> getString(R.string.last_user_visit_timestamp_format, formatTimestampToDate(timestamp))
+            TIMESTAMP_DEFAULT_VALUE  -> getString(R.string.first_visit)
+            else -> getString(R.string.last_user_visit_timestamp_format, formatTimestampToDatetime(timestamp))
         }
+    }
+
+    companion object {
+        const val TIMESTAMP_DEFAULT_VALUE: Long = -1L
     }
 
 }
