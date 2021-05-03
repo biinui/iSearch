@@ -13,7 +13,7 @@ import au.com.appetiser.isearch.movie.MovieListActivity
  * item details are presented side-by-side with a list of items
  * in a [MovieListActivity].
  */
-class ItemDetailActivity : AppCompatActivity() {
+class MovieDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -16,7 +16,7 @@ import com.google.android.material.appbar.CollapsingToolbarLayout
 /**
  * A fragment representing a single Item detail screen.
  * This fragment is either contained in a [ItemListActivity]
- * in two-pane mode (on tablets) or a [ItemDetailActivity]
+ * in two-pane mode (on tablets) or a [MovieDetailActivity]
  * on handsets.
  */
 class ItemDetailFragment : Fragment() {

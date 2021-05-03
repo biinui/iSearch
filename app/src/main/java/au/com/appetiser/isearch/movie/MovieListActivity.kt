@@ -17,7 +17,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import au.com.appetiser.isearch.R
 import au.com.appetiser.isearch.database.MovieDatabase
 import au.com.appetiser.isearch.databinding.ActivityItemListBinding
-import au.com.appetiser.isearch.moviedetail.ItemDetailActivity
+import au.com.appetiser.isearch.moviedetail.MovieDetailActivity
 import au.com.appetiser.isearch.moviedetail.ItemDetailFragment
 import com.google.android.material.snackbar.Snackbar
 import java.util.*
@@ -27,7 +27,7 @@ import java.util.*
  * An activity representing a list of Pings. This activity
  * has different presentations for handset and tablet-size devices. On
  * handsets, the activity presents a list of items, which when touched,
- * lead to a [ItemDetailActivity] representing
+ * lead to a [MovieDetailActivity] representing
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
