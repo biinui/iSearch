@@ -35,9 +35,9 @@ class MovieDetailActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
-            val fragment = ItemDetailFragment().apply {
+            val fragment = MovieDetailFragment().apply {
                 arguments = Bundle().apply {
-                    putLong(ItemDetailFragment.ARG_ITEM_ID, intent.getLongExtra(ItemDetailFragment.ARG_ITEM_ID, -1))
+                    putLong(MovieDetailFragment.ARG_ITEM_ID, intent.getLongExtra(MovieDetailFragment.ARG_ITEM_ID, -1))
                 }
             }
             supportFragmentManager.beginTransaction()

@@ -19,7 +19,7 @@ import com.google.android.material.appbar.CollapsingToolbarLayout
  * in two-pane mode (on tablets) or a [MovieDetailActivity]
  * on handsets.
  */
-class ItemDetailFragment : Fragment() {
+class MovieDetailFragment : Fragment() {
 
     override fun onCreateView( inflater: LayoutInflater   ,
                                container: ViewGroup?      ,
