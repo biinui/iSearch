@@ -11,13 +11,20 @@ class AppLifecycleObserver(private val applicationContext: Context) : LifecycleO
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onBackground() {
+        updateLastUserVisitTimestampInSharedPreferences()
+    }
+
+    private fun updateLastUserVisitTimestampInSharedPreferences() {
         val now = Date().time
         val sharedPref = applicationContext.getSharedPreferences(
             applicationContext.getString(R.string.preference_file),
             Context.MODE_PRIVATE
         ) ?: return
         with(sharedPref.edit()) {
-            putLong(applicationContext.getString(R.string.last_user_visit_timestamp), now)
+            putLong(
+                applicationContext.getString(R.string.last_user_visit_timestamp),
+                now
+            )
             apply()
         }
     }

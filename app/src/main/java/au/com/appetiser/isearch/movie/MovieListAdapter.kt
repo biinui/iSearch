@@ -61,6 +61,9 @@ class MovieListAdapter(private val clickListener: MovieListener, private val las
 
 }
 
+/**
+ *  Holds the TextView of RecyclersView's header.
+ */
 class TextViewHolder(view: View): RecyclerView.ViewHolder(view) {
     companion object {
         fun from(parent: ViewGroup, lastUserVisit: String): TextViewHolder {

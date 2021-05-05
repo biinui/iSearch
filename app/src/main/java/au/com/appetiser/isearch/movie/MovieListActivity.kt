@@ -196,17 +196,37 @@ class MovieListActivity : AppCompatActivity() {
                else           findViewById(R.id.swiperefresh)
     }
 
+    /**
+     *  Retrieves the timestamp when the user last visited the app.
+     *  The timestamp is retrieved from the SharedPreferences.
+     *
+     *  @return the timestamp in Long, -1 if it doesn't exist.
+     */
     private fun getLastUserVisitTimestamp(): Long {
         val sharedPref = this.getSharedPreferences(getString(R.string.preference_file), Context.MODE_PRIVATE) ?: return TIMESTAMP_DEFAULT_VALUE
         return sharedPref.getLong(getString(R.string.last_user_visit_timestamp), TIMESTAMP_DEFAULT_VALUE)
     }
 
+    /**
+     *  Formats a timestamp into a string following ISO 8601,
+     *  except that the month is MMM instead of MM.
+     *  For example, May instead of 05.
+     *
+     *  @param timestamp seconds since Unix or Epoch time
+     *  @return formatted date in String
+     */
     private fun formatTimestampToDatetime(timestamp: Long): String {
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = timestamp
         return DateFormat.format("yyyy MMM dd HH:mm:ss", calendar).toString()
     }
 
+    /**
+     *  Helper function for message to display to user of their last visit.
+     *
+     *  @return "First Visit" if timestamp is TIMESTAMP_DEFAULT_VALUE.
+     *  Otherwise, returns "Last Visit: " plus the formatted date.
+     */
     private fun getLastUserVisitDatetime(): String {
         return when (val timestamp = getLastUserVisitTimestamp()) {
             TIMESTAMP_DEFAULT_VALUE  -> getString(R.string.first_visit)

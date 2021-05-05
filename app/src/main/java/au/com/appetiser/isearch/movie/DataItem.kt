@@ -4,7 +4,8 @@ import au.com.appetiser.isearch.network.model.Movie
 
 sealed class DataItem {
     abstract val id: Long
-    data class MovieItem(val movie: Movie): DataItem()      {
+
+    data class MovieItem(val movie: Movie): DataItem() {
         override val id = movie.trackId
     }
 

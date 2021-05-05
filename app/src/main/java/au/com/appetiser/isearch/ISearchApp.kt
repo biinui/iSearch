@@ -9,8 +9,16 @@ class ISearchApp: Application() {
     override fun onCreate() {
         super.onCreate()
 
-        Timber.plant(Timber.DebugTree())
+        initTimber()
+        addLifecycleObserver()
 
+    }
+
+    private fun initTimber() {
+        Timber.plant(Timber.DebugTree())
+    }
+
+    private fun addLifecycleObserver() {
         ProcessLifecycleOwner.get()
                              .lifecycle
                              .addObserver(AppLifecycleObserver(applicationContext))
