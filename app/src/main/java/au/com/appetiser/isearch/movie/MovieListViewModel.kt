@@ -6,8 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
-class MovieListViewModel(private val repository: MovieRepositoryInterface): ViewModel() {
+class MovieListViewModel @Inject constructor(private val repository: MovieRepositoryInterface): ViewModel() {
 
     val movieList = repository.movieList
 

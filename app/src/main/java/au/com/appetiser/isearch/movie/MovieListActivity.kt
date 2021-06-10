@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.format.DateFormat
 import android.view.View
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.NestedScrollView
@@ -14,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import au.com.appetiser.isearch.BaseActivity
+import au.com.appetiser.isearch.ISearchApp
 import au.com.appetiser.isearch.R
 import au.com.appetiser.isearch.database.MovieDatabase
 import au.com.appetiser.isearch.databinding.ActivityItemListBinding
@@ -21,6 +23,7 @@ import au.com.appetiser.isearch.moviedetail.MovieDetailActivity
 import au.com.appetiser.isearch.moviedetail.MovieDetailFragment
 import com.google.android.material.snackbar.Snackbar
 import java.util.*
+import javax.inject.Inject
 
 
 /**
@@ -31,7 +34,7 @@ import java.util.*
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-class MovieListActivity : BaseActivity() {
+class MovieListActivity: AppCompatActivity() {
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -40,12 +43,16 @@ class MovieListActivity : BaseActivity() {
     private var isTwoPane: Boolean = false
     private lateinit var swipeRefresh: SwipeRefreshLayout
     private lateinit var swipeToRetry: ConstraintLayout
-    private lateinit var viewModel: MovieListViewModel
+
+    @Inject
+    lateinit var viewModel: MovieListViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        (applicationContext as ISearchApp).appComponent.inject(this)
+
         super.onCreate(savedInstanceState)
 
-        val binding = setContentView<ActivityItemListBinding>(this, R.layout.activity_item_list)
+        val binding = ActivityItemListBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.lifecycleOwner = this
 
@@ -53,8 +60,6 @@ class MovieListActivity : BaseActivity() {
 
         initSwipeRefresh()
         swipeRefresh.isRefreshing = true
-
-        initViewModel()
 
         initSwipeToRetryView()
         initToolbar()
@@ -70,13 +75,6 @@ class MovieListActivity : BaseActivity() {
         val movieListAdapter = MovieListAdapter(initMovieListener(), getLastUserVisitDatetime())
         initRecyclerView(movieListAdapter)
         observeMovieList(movieListAdapter)
-    }
-
-    private fun initViewModel() {
-        val database = MovieDatabase.getInstance(this.application)
-        val repository = MovieRepository(database)
-        val viewModelFactory = MovieListViewModelFactory(repository)
-        viewModel = ViewModelProvider(this, viewModelFactory).get(MovieListViewModel::class.java)
     }
 
     /**

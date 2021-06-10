@@ -8,6 +8,7 @@ import au.com.appetiser.isearch.network.model.Movie
 import au.com.appetiser.isearch.network.model.MovieListResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 private const val TERM_STAR   = "star"
 private const val COUNTRY_AU  = "au"
@@ -16,7 +17,7 @@ private const val MEDIA_MOVIE = "movie"
 private const val LIMIT_20  = "20"
 private const val LIMIT_200 = "200"
 
-class MovieRepository(private val database: MovieDatabase): MovieRepositoryInterface {
+class MovieRepository @Inject constructor(private val database: MovieDatabase): MovieRepositoryInterface {
     override val movie = MutableLiveData<Movie>()
     override val movieList: LiveData<List<Movie>> = database.movieDao.getAllMovies()
 
